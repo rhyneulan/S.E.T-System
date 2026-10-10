@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from rich import print
 
 logs_file = "logs.txt"
 
@@ -18,7 +19,7 @@ def logs_tracker(filename=logs_file):
     def storage(item=None):
         if item is not None:
             timestamp = datetime.now().strftime("%m-%d-%Y %H:%M:%S")
-            formatted_item = f"{timestamp} | {item}"
+            formatted_item = f"[dim]{timestamp}[/dim] | {item}"
 
             logs.append(formatted_item)
             with open(filename, "a") as file:

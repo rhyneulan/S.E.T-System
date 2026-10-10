@@ -1,1 +1,5 @@
 10-08-2026 15:33:46 | Added: +P 500.00
+[dim]10-10-2026 20:18:57[/dim] | [green bold]Added: +P 54.00 | Foods[/green bold]
+[dim]10-10-2026 20:22:59[/dim] | [red bold]Expense: -P 200.00[/red bold] | Foods | 1
+[dim]10-10-2026 20:24:35[/dim] | [red bold]Expense: -P 200.00[/red bold] | Foods | breakfast
+[dim]10-10-2026 20:25:03[/dim] | [red bold]Expense: -P 150.00[/red bold] | Foods | snack

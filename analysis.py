@@ -61,10 +61,10 @@ def show_warning(category=None):
         percent = get_percent(spent_amount, budget)
 
         if remaining[name] < 0:
-            print(f"[!] {name} is OVER budget by P{-remaining[name]:.2f}")
+            print(f"[red bold][!] {name} is OVER budget by P{-remaining[name]:.2f}[/red bold]")
             found_warning = True
         elif percent >= NEAR_LIMIT:
-            print(f"[!] {name} is near its limit ({percent:.0f}% used)")
+            print(f"[blue bold][!] {name} is near its limit ({percent:.0f}% used)[/blue bold]")
             found_warning = True
 
     if not found_warning and category is None:

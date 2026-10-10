@@ -17,7 +17,7 @@ def add_value():
     
     value += added_value
     save_value(category, value)
-    logs(f"Added: +P {added_value:.2f}")
+    logs(f"[green bold]Added: +P {added_value:.2f} | {category}[/green bold]")
     print()
     print("---Amount is Successfully Added to the Budget---\n")
     print(f"Your current budget for {category} is: {value}")
@@ -44,7 +44,7 @@ def deduct_value():
         expense += deducted_value
         save_evalue(category, expense)
         desc = expense_description()
-        logs(f"Expense: -P {deducted_value:.2f} | {category} | {desc}")
+        logs(f"[red bold]Expense: -P {deducted_value:.2f}[/red bold] | {category} | {desc}")
         print()
         print("---Amount is Successfully Deducted to the Budget---\n")
         print(f"Your current budget for {category} is: {value}")

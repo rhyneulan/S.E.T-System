@@ -6,14 +6,14 @@ from logs import clear_logs
 from analysis import comparing_with_budget, show_highest_spending, show_warning
 from balance import clear_balance
 from expense import clear_expenses
-
+from rich import print
 
 while True:
     clear_console()
     print("============================================================")
     print(" Welcome to S.E.T SYSTEM: Student Expense Tracker System")
     print("============================================================")
-    print(f"Your Total Remaining Balance is: "), total_balance()
+    print(f"Your Total Remaining Balance is: "), total_balance() 
     print("============================================================")
     print()
 

@@ -1,6 +1,7 @@
 from expense import expense_storage
 from logs import logs_tracker
 from balance import budget_storage
+from rich import print
 
 # Function for the expense
 def display_all_expenses():
