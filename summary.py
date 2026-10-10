@@ -11,7 +11,7 @@ def display_all_expenses():
         with open(expense_storage, "r") as file:
             for line in file:
                 category, amount = line.strip().split(":")
-                print(f"{category}: P{amount}")
+                print(f"{category}: ₱{amount}")
 
     except FileNotFoundError:
         print("---[!]No Expenses Found---")
@@ -24,7 +24,7 @@ def total_expense():
             for line in file:
                 category, amount = line.strip().split(":")
                 total += float(amount)
-        print(f"P{total:.2f}")
+        print(f"₱{total:.2f}")
     except FileNotFoundError:
          print("---[!]No Expenses Found---")
 
@@ -48,7 +48,7 @@ def display_all_budget():
         with open(budget_storage, "r") as file:
             for line in file:
                 category, amount = line.strip().split(":")
-                print(f"{category}: P{amount}")
+                print(f"{category}: ₱{amount}")
 
     except FileNotFoundError:
         print("---[!]No budget Found---")
@@ -61,6 +61,6 @@ def total_balance():
             for line in file:
                 category, amount = line.strip().split(":")
                 total += float(amount)
-        print(f"P{total:.2f}")
+        print(f"₱{total:.2f}")
     except FileNotFoundError:
          print("---[!]No budget Found---")

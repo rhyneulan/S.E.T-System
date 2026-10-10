@@ -76,7 +76,7 @@ while True:
 
         if option == 1:
             confirm = input("Do you want to clear all logs? (yes/no): ").strip().lower()
-            if confirm == "yes":
+            if confirm == "yes" or confirm == "y":
                 clear_logs()
                 print("---All logs has been successfuly cleared.---")
             else:
@@ -84,7 +84,7 @@ while True:
 
         elif option == 2:
             confirm = input("Do you want to reset all budget? (yes/no): ").strip().lower()
-            if confirm == "yes":
+            if confirm == "yes" or confirm == "y":
                 clear_balance()
                 print("---All budget has been successfuly reset.---")
             else:
@@ -92,7 +92,7 @@ while True:
 
         elif option == 3:
             confirm = input("Do you want to reset all expenses? (yes/no): ").strip().lower()
-            if confirm == "yes":
+            if confirm == "yes" or confirm == "y":
                 clear_expenses()
                 print("---All expenses has been successfuly reset.---")
             else:
