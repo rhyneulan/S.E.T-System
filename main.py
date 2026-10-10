@@ -1,19 +1,21 @@
 from rich import print
 from cleaner import clear_console
 from set_value import add_value, deduct_value
-from summary import total_expense, display_all_expenses, display_log, display_all_budget, total_balance
+from report  import total_expense, display_all_expenses, display_log, display_all_budget, total_balance, get_total_balance
 from logs import clear_logs
 from analysis import comparing_with_budget, show_highest_spending, show_warning
 from balance import clear_balance
 from expense import clear_expenses
+from tracker import show_spending
 from rich import print
+
 
 while True:
     clear_console()
     print("============================================================")
     print(" Welcome to S.E.T SYSTEM: Student Expense Tracker System")
     print("============================================================")
-    print(f"Your Total Remaining Balance is: "), total_balance() 
+    print(f"Your Total Remaining Balance is: ₱ {get_total_balance():.2f}") 
     print("============================================================")
     print()
 
@@ -36,7 +38,7 @@ while True:
         deduct_value()
 
     elif option == 3:
-        select = ["Total Expenses", "Total Budget", "Logs", "Budget vs Expenses", "Highest Spending Category", "Warnings"]
+        select = ["Total Expenses", "Total Budget", "Logs", "Budget vs Expenses", "Highest Spending Category", "Weekly & Monthly Spending", "Warnings"]
         print("\nSelect Option: ")
         for i, select in enumerate(select, start=1):
                 print(f"{i}. {select}")
@@ -60,6 +62,8 @@ while True:
         elif option == 5:
             show_highest_spending()
         elif option == 6:
+            show_spending()
+        elif option == 7:
             show_warning()
         else:
             print("\nInvalid input please try again.")

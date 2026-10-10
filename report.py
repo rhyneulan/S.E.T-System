@@ -64,3 +64,15 @@ def total_balance():
         print(f"₱{total:.2f}")
     except FileNotFoundError:
          print("---[!]No budget Found---")
+
+def get_total_balance():
+    total = 0.0
+
+    try:
+        with open(budget_storage, "r") as file:
+            for line in file:
+                category, amount = line.strip().split(":")
+                total += float(amount)
+    except FileNotFoundError:
+         return 0.0
+    return total
