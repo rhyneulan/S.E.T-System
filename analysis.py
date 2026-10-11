@@ -34,19 +34,27 @@ def comparing_with_budget():
               f"Remaining ₱ {remaining[category]:.2f} | [blue bold]Used {percent_spent:.2f}%[/blue bold]\n")
 
 def show_highest_spending():
-    spent = read_amounts(expense_storage)
+    remaining = read_amounts(expense_storage).copy()
 
-    highest_category = ""
-    highest_amount = 0.0
-    for  category in spent:
-        if spent[category] > highest_amount:
-            highest_category = category
-            highest_amount = spent[category]
-    print(f"---Highest Spending Category---")
-    if highest_category == "":
+    print("---Top 3 Highest Spending Categories---")
+    if len(remaining) == 0:
         print("No expenses recorded yet.")
-    else:
-        print(f"Category: [red bold]{highest_category}[/red bold], Amount Spent: [red bold]₱ {highest_amount:.2f}[/red bold]")
+        return
+
+    for rank in range(1, 4):
+        highest_category = ""
+        highest_amount = 0.0
+
+        for category in remaining:
+            if remaining[category] > highest_amount:
+                highest_category = category
+                highest_amount = remaining[category]
+
+        if highest_category == "":
+            break
+
+        print(f"{rank}. Category: [red bold]{highest_category}[/red bold], Amount Spent: [red bold]₱ {highest_amount:.2f}[/red bold]")
+        del remaining[highest_category]
 
 def show_warning(category=None):
     remaining = read_amounts(budget_storage)
@@ -62,7 +70,7 @@ def show_warning(category=None):
         percent = get_percent(spent_amount, budget)
 
         if percent == REACHED_LIMIT:
-            print(f"[red bold][!] {name} has reached its budget! ({percent:.0f}% used)[/red bold]")
+            print(f"[red bold][!] {name} has reached its budget limit! ({percent:.0f}% used)[/red bold]")
             found_warning = True
         
         elif percent >= NEAR_LIMIT:

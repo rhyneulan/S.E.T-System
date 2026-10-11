@@ -107,6 +107,6 @@ while True:
         break
         
     else:
-        print("\nInvalid input please try again.")
+        print("\nInvalid input please try again.\n")
 
     input("\n---Press Enter to Continue---")
