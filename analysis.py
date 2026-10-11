@@ -2,7 +2,8 @@ from balance import budget_storage
 from expense import expense_storage
 from rich import print
 
-NEAR_LIMIT = 70  # percentage threshold for warnings
+NEAR_LIMIT = 70 
+REACHED_LIMIT = 100  # percentage threshold for warnings
 
 def read_amounts(filename):
     amounts = {}
@@ -60,11 +61,12 @@ def show_warning(category=None):
         budget = remaining[name] + spent_amount
         percent = get_percent(spent_amount, budget)
 
-        if percent >= NEAR_LIMIT:
-            print(f"[blue bold][!] {name} is near its limit ({percent:.0f}% used)[/blue bold]")
-            found_warning = True
-        elif percent == 100:
+        if percent == REACHED_LIMIT:
             print(f"[red bold][!] {name} has reached its budget! ({percent:.0f}% used)[/red bold]")
+            found_warning = True
+        
+        elif percent >= NEAR_LIMIT:
+            print(f"[blue bold][!] {name} is near its limit ({percent:.0f}% used)[/blue bold]")
             found_warning = True
 
     if not found_warning and category is None:
