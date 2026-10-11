@@ -9,7 +9,6 @@ from expense import clear_expenses
 from tracker import show_spending
 from rich import print
 
-
 while True:
     clear_console()
     print("============================================================")

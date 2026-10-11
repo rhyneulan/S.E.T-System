@@ -4,7 +4,7 @@ def choose_category():
     print("\n---Expense Categories---")
 
     for i, category in enumerate(category, start=1):
-        print(f"{i}. {category}")
+        print(f"{i}. {category}") 
     try:
         option = int(input("Select your expense category: "))
     except ValueError:
