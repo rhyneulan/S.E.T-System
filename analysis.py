@@ -35,7 +35,6 @@ def comparing_with_budget():
 
 def show_highest_spending():
     remaining = read_amounts(expense_storage).copy()
-
     print("---Top 3 Highest Spending Categories---")
     if len(remaining) == 0:
         print("No expenses recorded yet.")
@@ -44,7 +43,6 @@ def show_highest_spending():
     for rank in range(1, 4):
         highest_category = ""
         highest_amount = 0.0
-
         for category in remaining:
             if remaining[category] > highest_amount:
                 highest_category = category
@@ -52,7 +50,6 @@ def show_highest_spending():
 
         if highest_category == "":
             break
-
         print(f"{rank}. Category: [red bold]{highest_category}[/red bold], Amount Spent: [red bold]₱ {highest_amount:.2f}[/red bold]")
         del remaining[highest_category]
 
