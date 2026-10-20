@@ -1,78 +1,124 @@
-from balance import budget_storage
-from expense import expense_storage
-from rich import print
+from monthly import CATEGORIES, get_current_month, get_month_label, read_monthly, get_budget_and_expense
+from table_view import print_table, peso
 
-NEAR_LIMIT = 70 
-REACHED_LIMIT = 100  # percentage threshold for warnings
+NEAR_LIMIT = 70  # percentage where the "near limit" warning starts
 
-def read_amounts(filename):
-    amounts = {}
-    with open(filename, "r") as file:
-        for line in file:
-            line = line.strip()
-            if line == "":
-                continue
-            name, amount = line.split(":")
-            amounts[name] = float(amount)
-    return amounts
 
 def get_percent(spend, budget):
     if budget <= 0:
         return 0.0
     return (spend / budget) * 100
 
-def comparing_with_budget():
-    remaining = read_amounts(budget_storage)
-    spent = read_amounts(expense_storage)
 
-    print("---Budget vs Expenses---\n")
-    for category in remaining:
-        spent_amount = spent.get(category, 0.0)
-        budget = remaining[category] + spent_amount
-        percent_spent = get_percent(spent_amount, budget)
-        print(f"{category}: [green bold]Budget ₱ {budget:.2f}[/green bold], [red bold]Spent ₱ {spent_amount:.2f}[/red bold] |" 
-              f"Remaining ₱ {remaining[category]:.2f} | [blue bold]Used {percent_spent:.2f}%[/blue bold]\n")
+def get_highest_spending(records, month):
+    # Returns the category with the highest expense in that month and the amount.
+    highest_category = ""
+    highest_amount = 0.0
 
-def show_highest_spending():
-    remaining = read_amounts(expense_storage).copy()
-    print("---Top 3 Highest Spending Categories---")
-    if len(remaining) == 0:
-        print("No expenses recorded yet.")
+    for category in CATEGORIES:
+        budget, expense = get_budget_and_expense(records, month, category)
+        if expense > highest_amount:
+            highest_category = category
+            highest_amount = expense
+
+    return highest_category, highest_amount
+
+
+def get_warnings(records, month):
+    # Returns a list of warnings for that month. Each warning is [category, status, color].
+    warnings = []
+
+    for category in CATEGORIES:
+        budget, expense = get_budget_and_expense(records, month, category)
+        percent = get_percent(expense, budget)
+
+        if budget == 0 and expense > 0:
+            warnings.append([category, "Over budget (no budget set)", "red bold"])
+        elif expense > budget:
+            warnings.append([category, f"Over budget ({percent:.0f}% used)", "red bold"])
+        elif budget > 0 and expense >= budget:
+            warnings.append([category, f"Limit reached ({percent:.0f}% used)", "red bold"])
+        elif percent >= NEAR_LIMIT:
+            warnings.append([category, f"Near limit ({percent:.0f}% used)", "blue bold"])
+
+    return warnings
+
+
+def show_expense_vs_budget():
+    records = read_monthly()
+    month = get_current_month()
+    label = get_month_label(month)
+
+    # Table 1: budget vs. expense of every category this month
+    rows = []
+    styles = {}
+    total_budget = 0.0
+    total_expense = 0.0
+
+    for category in CATEGORIES:
+        budget, expense = get_budget_and_expense(records, month, category)
+
+        if budget == 0 and expense == 0:
+            continue  # nothing happened in this category
+
+        remaining = budget - expense
+        used = f"{get_percent(expense, budget):.0f}%" if budget > 0 else "-"
+
+        if remaining < 0:
+            styles[len(rows)] = "red"
+
+        rows.append([category, peso(budget), peso(expense), peso(remaining), used])
+        total_budget += budget
+        total_expense += expense
+
+    total = [
+        "Total",
+        peso(total_budget),
+        peso(total_expense),
+        peso(total_budget - total_expense),
+        f"{get_percent(total_expense, total_budget):.0f}%" if total_budget > 0 else "-",
+    ]
+
+    print_table(
+        f"EXPENSE VS. BUDGET ({label})",
+        ["Category", "Budget", "Expense", "Remaining", "Used"],
+        rows,
+        ["<", ">", ">", ">", ">"],
+        total=total,
+        styles=styles,
+        empty_message="No budget or expenses recorded this month.",
+    )
+
+    if len(rows) == 0:
         return
 
-    for rank in range(1, 4):
-        highest_category = ""
-        highest_amount = 0.0
-        for category in remaining:
-            if remaining[category] > highest_amount:
-                highest_category = category
-                highest_amount = remaining[category]
+    # Table 2: highest spending category of this month
+    highest_category, highest_amount = get_highest_spending(records, month)
+    highest_rows = []
+    if highest_category != "":
+        highest_rows.append([highest_category, peso(highest_amount)])
 
-        if highest_category == "":
-            break
-        print(f"{rank}. Category: [red bold]{highest_category}[/red bold], Amount Spent: [red bold]₱ {highest_amount:.2f}[/red bold]")
-        del remaining[highest_category]
+    print_table(
+        f"HIGHEST SPENDING CATEGORY ({label})",
+        ["Category", "Amount Spent"],
+        highest_rows,
+        ["<", ">"],
+        styles={0: "red bold"},
+        empty_message="No expenses yet.",
+    )
 
-def show_warning(category=None):
-    remaining = read_amounts(budget_storage)
-    spent = read_amounts(expense_storage)
-    found_warning = False
+    # Table 3: warnings of this month
+    warning_rows = []
+    warning_styles = {}
 
-    for name in remaining:
-        if category is not None and name != category:
-            continue   # skip categories we are not checking
+    for number, (category, status, color) in enumerate(get_warnings(records, month), start=1):
+        warning_rows.append([number, category, status])
+        warning_styles[number - 1] = color
 
-        spent_amount = spent.get(name, 0)
-        budget = remaining[name] + spent_amount
-        percent = get_percent(spent_amount, budget)
-
-        if percent == REACHED_LIMIT:
-            print(f"[red bold][!] {name} has reached its budget limit! ({percent:.0f}% used)[/red bold]")
-            found_warning = True
-        
-        elif percent >= NEAR_LIMIT:
-            print(f"[blue bold][!] {name} is near its limit ({percent:.0f}% used)[/blue bold]")
-            found_warning = True
-
-    if not found_warning and category is None:
-        print("No warnings. All categories are within budget.")
+    print_table(
+        f"WARNING ({label})",
+        ["No.", "Category", "Warning"],
+        warning_rows,
+        styles=warning_styles,
+        empty_message="No warnings. All categories are within budget.",
+    )

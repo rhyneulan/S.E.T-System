@@ -1,61 +1,65 @@
-from datetime import datetime, date, timedelta
-from rich import print
+from monthly import CATEGORIES, get_current_month, get_month_label, read_monthly, get_budget_and_expense
+from table_view import print_table, peso
+
 
 def show_spending():
-    print("\n1. Show Weekly Spending")
-    print("\n2. Show Monthly Spending")
+    records = read_monthly()
 
-    try:
-        option = int(input("\nSelect Option: "))
-    except ValueError:
-        option = 0
+    # Table 1: one row per month
+    month_budget = {}
+    month_expense = {}
 
-    today = date.today()
+    for month, category, budget, expense in records:
+        month_budget[month] = month_budget.get(month, 0.0) + budget
+        month_expense[month] = month_expense.get(month, 0.0) + expense
 
-    if option == 1:
-        start_date = today - timedelta(days=today.weekday())
-    else:
-        start_date = today.replace(day=1)
+    rows = []
+    styles = {}
+    total_budget = 0.0
+    total_expense = 0.0
 
-    try:
-        with open("logs.txt", "r", encoding="utf-8") as file:
-            lines = file.readlines()
-    except FileNotFoundError:
-        print("---[!]No Logs Found---")
-        return
+    for month in sorted(month_budget):
+        budget = month_budget[month]
+        expense = month_expense[month]
+        savings = budget - expense
 
-    totals = {}
+        if savings < 0:
+            styles[len(rows)] = "red"
 
-    for line in lines:
-        parts = line.strip().split(" | ")
-        if len(parts) < 3:
-            continue
-        if "Expense:" not in parts[1]:
-            continue
+        rows.append([get_month_label(month), peso(budget), peso(expense), peso(savings)])
+        total_budget += budget
+        total_expense += expense
 
-        date_text = parts[0].replace("[dim]", "").replace("[/dim]", "")
-        date_text = date_text[:10]
-        expense_date = datetime.strptime(date_text, "%m-%d-%Y").date()
+    print_table(
+        "MONTHLY SPENDING",
+        ["Month", "Budget", "Expenses", "Savings"],
+        rows,
+        ["<", ">", ">", ">"],
+        total=["Total", peso(total_budget), peso(total_expense), peso(total_budget - total_expense)],
+        styles=styles,
+        empty_message="No budget or expenses recorded yet.",
+    )
 
-        if expense_date >= start_date:
-            amount_text = parts[1].replace("[red bold]Expense: -₱ ", "").replace("[/red bold]", "")
-            amount = float(amount_text)
-            category = parts[2]
+    # Table 2: where this month's money went
+    this_month = get_current_month()
+    spent = []
+    month_total = 0.0
 
-            if category in totals:
-                totals[category] = totals[category] + amount
-            else:
-                totals[category] = amount
+    for category in CATEGORIES:
+        budget, expense = get_budget_and_expense(records, this_month, category)
+        if expense > 0:
+            spent.append([category, expense])
+            month_total += expense
 
-    print(f"\n---Spending since {start_date.strftime('%b %d, %Y')}---")
+    category_rows = []
+    for category, expense in spent:
+        category_rows.append([category, peso(expense), f"{expense / month_total * 100:.0f}%"])
 
-    if not totals:
-        print("No expenses recorded for this period.")
-        return
-
-    all_total = 0.0
-    for category in totals:
-        print(f"{category}: ₱ {totals[category]:.2f}")
-        all_total = all_total + totals[category]
-
-    print(f"\nTotal: ₱ {all_total:.2f}")
+    print_table(
+        f"SPENDING BY CATEGORY ({get_month_label(this_month)})",
+        ["Category", "Spent", "Share"],
+        category_rows,
+        ["<", ">", ">"],
+        total=["Total", peso(month_total), "100%"],
+        empty_message="No expenses recorded this month.",
+    )

@@ -28,3 +28,21 @@ def logs_tracker(filename=logs_file):
         return logs
     
     return storage
+
+# Turns one line of logs.txt into [date and time, type, amount, category, description].
+# Returns None when the line is damaged.
+def parse_log_line(line):
+    parts = line.split(" | ")
+    if len(parts) < 3:
+        return None
+
+    try:
+        timestamp = parts[0].replace("[dim]", "").replace("[/dim]", "")
+        kind = "Expense" if "Expense:" in parts[1] else "Budget"
+        amount = float(parts[1].split("₱")[1].replace("[/red bold]", "").strip())
+    except (ValueError, IndexError):
+        return None
+
+    category = parts[2]
+    description = " | ".join(parts[3:]).replace("\\[", "[")  # undo the escape() done when saving
+    return [timestamp, kind, amount, category, description]
