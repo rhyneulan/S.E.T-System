@@ -86,7 +86,6 @@ def deduct_value():
 
     month = add_expense(category, deducted_value)
 
-    # escape() makes sure brackets typed in the description are not read as rich markup
     logs(
         f"[red bold]Expense: -₱ {deducted_value:.2f}"
         f"[/red bold] | {category} | {escape(desc)}"
