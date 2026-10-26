@@ -10,7 +10,6 @@ def peso(amount):
 
 def print_table(title, headers, rows, aligns=None, total=None, styles=None, empty_message="Nothing to show."):
     # Prints one table. Every table in the program is printed with this function,
-    # so they all look the same.
     #
     #   title         - the heading above the table
     #   headers       - list of column names, e.g. ["Category", "Budget"]
