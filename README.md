@@ -175,7 +175,7 @@ S.E.T-System-Student-Expense-Tracker/
 Open Command Prompt or PowerShell.
 
 ```bash
-git clone <YOUR-GITHUB-REPOSITORY-URL>
+git clone https://github.com/rhyneulan/S.E.T-System
 ```
 
 Enter the project directory:
@@ -302,7 +302,7 @@ The application does not require MySQL, SQLite, MongoDB, or another external dat
 If Python and Git are already installed, use the following commands:
 
 ```bash
-git clone <YOUR-GITHUB-REPOSITORY-URL>
+git clone https://github.com/rhyneulan/S.E.T-System
 cd S.E.T-System-Student-Expense-Tracker
 python -m venv setsy
 setsy\Scripts\activate
