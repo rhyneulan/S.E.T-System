@@ -4,7 +4,7 @@ from monthly import CATEGORIES
 def choose_category():
     # Displays the list of expense categories and asks the user to pick one.
     while True:
-        print("\n---Expense Categories---")
+        print("\n---Choose Catergories---")
 
         for number, name in enumerate(CATEGORIES, start=1):
             print(f"{number}. {name}")
